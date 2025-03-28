@@ -1,112 +1,132 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+"use client"
+
+import { useState } from "react"
+import axios from "axios"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { AlertCircle } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 const CoalEmission = () => {
-  const [coalType, setCoalType] = useState('');
-  const [coalConsumption, setCoalConsumption] = useState('');
-  const [co2Emissions, setCo2Emissions] = useState(null);
-  const [error, setError] = useState('');
+  const [coalType, setCoalType] = useState("")
+  const [coalConsumption, setCoalConsumption] = useState("")
+  const [co2Emissions, setCo2Emissions] = useState(null)
+  const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleCoalTypeChange = (event) => {
-    setCoalType(event.target.value);
-  };
+  const handleCoalTypeChange = (value) => {
+    setCoalType(value)
+  }
 
   const handleCoalConsumptionChange = (event) => {
-    setCoalConsumption(event.target.value);
-  };
+    setCoalConsumption(event.target.value)
+  }
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (!coalType || !coalConsumption) {
-      setError('Please provide both coal type and consumption');
-      return;
+      setError("Please provide both coal type and consumption")
+      return
     }
+
+    setIsLoading(true)
 
     try {
       // Sending POST request using axios
-      const response = await axios.post('http://localhost:5000/api/coal-emission', {
+      const response = await axios.post("http://localhost:5000/api/coal-emission", {
         coalType,
-        coalConsumption: parseFloat(coalConsumption),
-      });
+        coalConsumption: Number.parseFloat(coalConsumption),
+      })
 
-      setCo2Emissions(response.data.co2Emissions);
-      setError('');
+      setCo2Emissions(response.data.co2Emissions)
+      setError("")
     } catch (error) {
-      setError(error.response?.data?.message || 'Error calculating emissions');
+      setError(error.response?.data?.message || "Error calculating emissions")
+    } finally {
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="p-6 bg-[#2B263F] shadow-lg rounded-lg">
-      {error && <p className="text-red-400 text-center mb-4">{error}</p>}
-  
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label
-            htmlFor="coalType"
-            className="block text-sm font-medium text-[#cad9ed] mb-2"
-          >
+    <div className="space-y-4">
+      {error && (
+        <Alert variant="destructive" className="bg-red-900/30 border-red-700 text-red-100">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="coalType" className="text-lg font-medium text-cyan-100">
             Coal Type
-          </label>
-          <select
-            id="coalType"
-            name="coalType"
-            value={coalType}
-            onChange={handleCoalTypeChange}
-            className="w-full px-4 py-3 border border-[#66C5CC] bg-[#2B263F] text-[#cad9ed] rounded-md focus:outline-none focus:ring-2 focus:ring-[#66C5CC]"
-          >
-            <option value="" className="text-gray-500">
-              Select Coal Type
-            </option>
-            <option value="Lignite">Lignite</option>
-            <option value="Sub-bituminous">Sub-bituminous</option>
-            <option value="Bituminous">Bituminous</option>
-            <option value="Anthracite">Anthracite</option>
-          </select>
+          </Label>
+          <Select value={coalType} onValueChange={handleCoalTypeChange}>
+            <SelectTrigger id="coalType" className="w-full border-cyan-700/50 bg-slate-800/90 text-cyan-50">
+              <SelectValue placeholder="Select Coal Type" />
+            </SelectTrigger>
+            <SelectContent className="bg-slate-800 border-cyan-700/50">
+              <SelectItem value="Lignite" className="text-cyan-50">
+                Lignite
+              </SelectItem>
+              <SelectItem value="Sub-bituminous" className="text-cyan-50">
+                Sub-bituminous
+              </SelectItem>
+              <SelectItem value="Bituminous" className="text-cyan-50">
+                Bituminous
+              </SelectItem>
+              <SelectItem value="Anthracite" className="text-cyan-50">
+                Anthracite
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-  
-        <div>
-          <label
-            htmlFor="coalConsumption"
-            className="block text-sm font-medium text-[#cad9ed] mb-2"
-          >
+
+        <div className="space-y-2">
+          <Label htmlFor="coalConsumption" className="text-lg font-medium text-cyan-100">
             Coal Consumption (in tons)
-          </label>
-          <input
+          </Label>
+          <Input
             type="number"
             id="coalConsumption"
-            name="coalConsumption"
             value={coalConsumption}
             onChange={handleCoalConsumptionChange}
-            className="w-full px-4 py-3 border border-[#66C5CC] bg-[#2B263F] text-[#cad9ed] rounded-md focus:outline-none focus:ring-2 focus:ring-[#66C5CC]"
+            className="border-cyan-700/50 bg-slate-800/90 text-cyan-50"
             placeholder="Enter coal consumption in tons"
             min="0"
-            required
           />
         </div>
-  
-        <button
-          type="submit"
-          className="w-full bg-[#66C5CC] text-[#2B263F] font-semibold py-3 rounded-md hover:bg-[#57b1ba] focus:outline-none focus:ring-2 focus:ring-[#66C5CC]"
-        >
-          Calculate Emissions
-        </button>
+
+        <div className="pt-2">
+          <Button
+            type="submit"
+            className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-lg shadow-lg hover:shadow-cyan-700/20 transition-all duration-200"
+            disabled={isLoading}
+          >
+            {isLoading ? "Calculating..." : "Calculate Emissions"}
+          </Button>
+        </div>
       </form>
-  
+
       {co2Emissions !== null && (
-        <div className="mt-8 p-4 bg-[#1E1A2E] border border-[#66C5CC] rounded-md">
-          <h3 className="text-xl font-semibold text-[#cad9ed] mb-2">
-            Calculated CO2 Emissions:
-          </h3>
-          <p className="text-lg text-[#cad9ed]">
-            CO2 Emissions: {co2Emissions.toFixed(2)} kg
-          </p>
+        <div className="mt-4 p-4 bg-slate-800/90 rounded-lg border border-cyan-700/30 shadow-inner">
+          <h3 className="text-xl font-semibold text-cyan-400 mb-2">Calculated CO2 Emissions:</h3>
+          <div className="flex items-center justify-between">
+            <p className="text-lg text-cyan-50">CO2 Emissions:</p>
+            <p className="text-lg font-semibold text-cyan-50">{co2Emissions.toFixed(2)} kg</p>
+          </div>
+          <div className="mt-2 flex items-center justify-between">
+            <p className="text-lg text-cyan-50">CO2 Emissions:</p>
+            <p className="text-lg font-semibold text-cyan-50">{(co2Emissions / 1000).toFixed(2)} tonnes</p>
+          </div>
         </div>
       )}
     </div>
-  );
-  };
-  
-  export default CoalEmission;
-  
+  )
+}
+
+export default CoalEmission
+
