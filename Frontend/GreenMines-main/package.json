@@ -65,7 +65,7 @@
     "pdf-lib": "^1.17.1",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.2.0",
-    "react-day-picker": "^9.6.3",
+    "react-day-picker": "^8.10.1",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
     "react-icons": "^4.3.1",

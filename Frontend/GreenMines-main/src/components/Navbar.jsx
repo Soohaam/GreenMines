@@ -1,9 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { Disclosure } from "@headlessui/react";
 import { HashLink } from "react-router-hash-link";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes, FaUserCircle, FaChevronDown } from "react-icons/fa";
+import { ChevronDown, Menu, User, X } from 'lucide-react';
 import logo from "./logo.png";
+
+import { cn } from "@/lib/utils";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -12,15 +27,10 @@ const navigation = [
   { name: "Neutrality", href: "/neutralityoptions" }
 ];
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
-export default function Navbar({ className }) {
+function Navbar({ className }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [navs, setNavs] = useState(navigation);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const updatedNavs = navigation.map(nav => ({
@@ -35,25 +45,64 @@ export default function Navbar({ className }) {
     console.log("Signing out...");
   };
 
+  const navigationMenuItemClasses = "flex";
+  
+  const navigationMenuLinkClasses = (current) => cn(
+    "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-6 text-lg font-medium transition-colors focus:outline-none focus:bg-transparent disabled:pointer-events-none disabled:opacity-50",
+    current 
+      ? "text-transparent bg-clip-text bg-gradient-to-br from-[#6664F1] to-[#C94AF0]" 
+      : "text-gray-300 hover:text-white hover:scale-110 ease-in duration-200"
+  );
+
+  const mobileNavItemClasses = (current) => cn(
+    "flex w-full items-center rounded-md p-3 text-lg font-medium",
+    current
+      ? "bg-[#342F49] text-[#66C5CC]"
+      : "text-[#66C5CC] hover:bg-[#342F49] hover:text-white"
+  );
+
   return (
-    <Disclosure as="nav" className={`bg-transparent ${className}`}>
-  {({ open }) => (
-    <>
+    <nav className={`bg-transparent ${className}`}>
       <div className="w-full px-4">
         <div className="relative flex items-center justify-between h-20 max-w-screen-2xl mx-auto sm:mt-4 mt-8">
           {/* Mobile menu button */}
-          <div className="sm:hidden">
-            <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-              <span className="sr-only">Open main menu</span>
-              {open ? (
-                <FaTimes className="block h-6 w-6" aria-hidden="true" />
-              ) : (
-                <FaBars className="block h-6 w-6" aria-hidden="true" />
-              )}
-            </Disclosure.Button>
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-700">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Open main menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="bg-[#2B263F] border-r border-[#342F49] p-0">
+                <div className="flex flex-col space-y-2 py-6">
+                  {navs.map((item) => (
+                    <HashLink
+                      key={item.name}
+                      to={item.href}
+                      className={mobileNavItemClasses(item.current)}
+                    >
+                      {item.name}
+                    </HashLink>
+                  ))}
+                  <HashLink to="/profile" className={mobileNavItemClasses(false)}>
+                    Profile
+                  </HashLink>
+                  <HashLink to="/predictions" className={mobileNavItemClasses(false)}>
+                    Predictions
+                  </HashLink>
+                  <HashLink to="/routing" className={mobileNavItemClasses(false)}>
+                    Route
+                  </HashLink>
+                  <button onClick={handleSignOut} className={cn(mobileNavItemClasses(false), "text-left")}>
+                    Logout
+                  </button>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
 
-          {/* Title */}
+          {/* Logo */}
           <div className="flex-shrink-0">
             <img
               src={logo}
@@ -64,136 +113,63 @@ export default function Navbar({ className }) {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden sm:flex flex-grow justify-center">
-            <div className="flex space-x-24">
-              {navs.map((item) => (
-                <HashLink
-                  key={item.name}
-                  to={item.href}
-                  className={classNames(
-                    item.current
-                      ? "text-transparent bg-clip-text bg-gradient-to-br from-[#6664F1] to-[#C94AF0] text-xl"
-                      : "text-gray-300",
-                    "px-4 py-2 rounded-md text-lg font-medium hover:text-white hover:scale-110 ease-in duration-200"
-                  )}
-                  aria-current={item.current ? "page" : undefined}
-                >
-                  {item.name}
-                </HashLink>
-              ))}
-            </div>
+          <div className="hidden md:flex flex-grow justify-center">
+            <NavigationMenu className="mx-auto">
+              <NavigationMenuList className="flex space-x-24">
+                {navs.map((item) => (
+                  <NavigationMenuItem key={item.name} className={navigationMenuItemClasses}>
+                    <HashLink to={item.href}>
+                      <NavigationMenuLink className={navigationMenuLinkClasses(item.current)}>
+                        {item.name}
+                      </NavigationMenuLink>
+                    </HashLink>
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
           </div>
 
-          {/* Contact Us Button and Profile Icon */}
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => navigate("/contactus")}
-              className="hidden sm:block relative text-white border rounded px-8 py-3 text-lg hover:text-white c-btn tracking-wider overflow-hidden"
-            >
-              <span className="absolute inset-0 bg-gradient-to-br from-[#6664F1] to-[#C94AF0]"></span>
-              <span className="relative z-10 flex justify-center items-center">
-                Contact Us
-              </span>
-            </button>
-
-            {/* Desktop Dropdown */}
-            <div className="relative hidden sm:block">
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center text-gray-300 hover:text-white transition-colors duration-200"
-                aria-haspopup="true"
-                aria-expanded={dropdownOpen}
-              >
-                <FaUserCircle className="text-5xl" />
-                <FaChevronDown className="ml-2 text-lg transition-transform duration-200" />
-              </button>
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-3 w-60 bg-[#342F49] rounded-lg shadow-xl py-2 z-10">
-                  <a
-                    href="/profile"
-                    className="block px-6 py-3 text-base text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white transition-colors duration-200"
-                  >
-                    Profile
-                  </a>
-                  <a
-                    href="/predictions"
-                    className="block px-6 py-3 text-base text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white transition-colors duration-200"
-                  >
-                    Predictions
-                  </a>
-                  <a
-                    href="/routing"
-                    className="block px-6 py-3 text-base text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white transition-colors duration-200"
-                  >
-                    Route
-                  </a>
-                  <button
-                    onClick={handleSignOut}
-                    className="block w-full text-left px-6 py-3 text-base text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white transition-colors duration-200"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
+          {/* Profile Dropdown */}
+          <div className="flex items-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200">
+                  <User className="h-8 w-8" />
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-[#342F49] border-[#342F49] min-w-[240px]">
+                <DropdownMenuItem 
+                  className="text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white py-3 px-6 text-base cursor-pointer"
+                  onClick={() => navigate("/profile")}
+                >
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white py-3 px-6 text-base cursor-pointer"
+                  onClick={() => navigate("/predictions")}
+                >
+                  Predictions
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white py-3 px-6 text-base cursor-pointer"
+                  onClick={() => navigate("/routing")}
+                >
+                  Route
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white py-3 px-6 text-base cursor-pointer"
+                  onClick={handleSignOut}
+                >
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      <Disclosure.Panel className="sm:hidden">
-        <div className="px-2 pt-2 pb-3 space-y-1">
-          {navs.map((item) => (
-            <Disclosure.Button
-              key={item.name}
-              as="a"
-              href={item.href}
-              className={classNames(
-                item.current
-                  ? "bg-[#342F49] text-[#66C5CC]"
-                  : "text-[#66C5CC] hover:bg-[#342F49] hover:text-white",
-                "block px-6 py-3 rounded-md text-lg font-semibold"
-              )}
-              aria-current={item.current ? "page" : undefined}
-            >
-              {item.name}
-            </Disclosure.Button>
-          ))}
-          {/* Additional Options in Mobile Menu */}
-          <Disclosure.Button
-            as="a"
-            href="/profile"
-            className="block px-6 py-3 text-[#66C5CC] hover:bg-[#342F49] hover:text-white rounded-md text-lg font-semibold"
-          >
-            Profile
-          </Disclosure.Button>
-          <Disclosure.Button
-            as="a"
-            href="/predictions"
-            className="block px-6 py-3 text-[#66C5CC] hover:bg-[#342F49] hover:text-white rounded-md text-lg font-semibold"
-          >
-            Predictions
-          </Disclosure.Button>
-          <Disclosure.Button
-            as="a"
-            href="/routing"
-            className="block px-6 py-3 text-[#66C5CC] hover:bg-[#342F49] hover:text-white rounded-md text-lg font-semibold"
-          >
-            Route
-          </Disclosure.Button>
-          <Disclosure.Button
-            as="button"
-            onClick={handleSignOut}
-            className="block w-full text-left px-6 py-3 text-[#66C5CC] hover:bg-[#342F49] hover:text-white rounded-md text-lg font-semibold"
-          >
-            Logout
-          </Disclosure.Button>
-        </div>
-      </Disclosure.Panel>
-    </>
-  )}
-</Disclosure>
-
+    </nav>
   );
 }
 
+export default Navbar;
