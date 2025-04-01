@@ -5,7 +5,7 @@ require('dotenv').config();
 // Gemini API initialization
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY2); // Replace with your Gemini API Key
 const model = genAI.getGenerativeModel({
-    model: "gemini-pro", // Use your desired Gemini model
+    model: "gemini-1.5-flash", // Use your desired Gemini model
     maxTokens: 4500 // Adjust this based on your required token limit
 });
 

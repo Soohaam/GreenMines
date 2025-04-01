@@ -108,9 +108,9 @@ export default function ChatBot() {
     <div className="w-full h-full md:w-3/4 md:h-screen flex flex-col md:flex-row">
       <button
         onClick={handleBack}
-        className="bg-[#2b8d94] text-black font-bold px-4 md:px-8 py-2 md:py-3 text-base md:text-xl rounded-lg mb-4 md:mb-0 md:mt-4 md:self-start flex items-center space-x-2 md:absolute md:top-8 md:left-8"
+        className="bg-[#2b8d94] text-black font-bold px-3 md:px-6 py-1 md:py-3 text-sm md:text-l rounded-lg mb-4 md:mb-0 md:mt-4 md:self-start flex items-center space-x-2 md:absolute md:top-8 md:left-8"
       >
-        <FaArrowLeft className="w-4 h-4 md:w-6 md:h-6" />
+        <FaArrowLeft className="w-3 h-3 md:w-6 md:h-6" />
         <span>Go Back</span>
       </button>
       <div className="flex flex-col flex-grow md:h-screen w-full bg-[#231E3D] border-[#66C5CC] rounded-lg pt-2">

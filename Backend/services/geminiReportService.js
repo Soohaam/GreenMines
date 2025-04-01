@@ -6,7 +6,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY3);
 const generateEnvironmentalReportContent = async (data) => {
     try {
         const model = genAI.getGenerativeModel({ 
-            model: "gemini-pro",
+            model: "gemini-1.5-pro",
             generationConfig: {
                 maxOutputTokens: 5000,  // Increased token limit
                 temperature: 0.7,        // Balanced creativity

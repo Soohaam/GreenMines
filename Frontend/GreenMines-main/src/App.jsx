@@ -66,7 +66,7 @@ function App() {
             {/* <Experience /> */}
             <Projects id="projects" />
             <MarqueeReviews/>
-            <Clients />
+            {/* <Clients /> */}
             <Footer />
           </>
         } />

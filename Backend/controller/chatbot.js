@@ -45,7 +45,7 @@ const GEMINI_API_URL = "https://gemini-ai-api-url/v1/chat"; // Replace with actu
 
         // Gemini AI Processing
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         const result = await model.generateContent(professionalPrompt);
 
