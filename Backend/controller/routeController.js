@@ -1,57 +1,68 @@
-const axios = require('axios');
+const axios = require("axios");
 
 exports.optimizeRoute = async (req, res) => {
   try {
-    // Extract vehicle and services information from the request body
     const { vehicle, services } = req.body;
 
-    // Validate incoming data
-    if (!vehicle || !services || !Array.isArray(services)) {
-      return res.status(400).json({ error: 'Invalid payload. Ensure vehicle and services are provided.' });
+    // Validate vehicle data
+    if (!vehicle || !vehicle.coordinates || !vehicle.coordinates.lat || !vehicle.coordinates.lon) {
+      return res.status(400).json({ error: "Invalid vehicle data. Ensure coordinates are provided." });
     }
 
-    if (!vehicle.coordinates || !vehicle.coordinates.lat || !vehicle.coordinates.lon) {
-      return res.status(400).json({ error: 'Invalid vehicle coordinates.' });
+    // Validate services data
+    if (!Array.isArray(services) || services.length === 0) {
+      return res.status(400).json({ error: "At least one service location is required." });
     }
 
-    if (services.length === 0) {
-      return res.status(400).json({ error: 'At least one service is required.' });
-    }
-
-    // Validate that all services have valid coordinates
     for (let service of services) {
       if (!service.coordinates || !service.coordinates.lat || !service.coordinates.lon) {
         return res.status(400).json({ error: `Invalid coordinates for service ${service.name}.` });
       }
     }
 
-    // Construct the list of coordinates for the vehicle and services
-    const coordinates = [
-      `${vehicle.coordinates.lon},${vehicle.coordinates.lat}`, // Vehicle start point (lon, lat)
-      ...services.map(service => `${service.coordinates.lon},${service.coordinates.lat}`), // Service points
-    ];
+    // Convert lat/lon to numbers (since they are currently strings)
+    const parseCoordinates = (coord) => ({
+      lat: parseFloat(coord.lat),
+      lon: parseFloat(coord.lon),
+    });
 
-    // OSRM API URL (free route optimization API)
-    const osrmUrl = `http://router.project-osrm.org/route/v1/driving/${coordinates.join(';')}?overview=full&geometries=polyline`;
+    const vehicleCoords = parseCoordinates(vehicle.coordinates);
+    const serviceCoords = services.map((s) => parseCoordinates(s.coordinates));
 
-    // Request route optimization from OSRM
+    // Build coordinates string for OSRM
+    let coordinates = [`${vehicleCoords.lon},${vehicleCoords.lat}`];
+
+    serviceCoords.forEach(coord => {
+      coordinates.push(`${coord.lon},${coord.lat}`);
+    });
+
+    const coordinatesString = coordinates.join(";");
+
+    // OSRM Trip API - Optimizes the visit order
+    const osrmUrl = `http://router.project-osrm.org/trip/v1/driving/${coordinatesString}?source=first&destination=last&overview=full&geometries=polyline`;
+
+    console.log("OSRM Request URL:", osrmUrl);
+    
     const response = await axios.get(osrmUrl);
 
-    if (response.data.routes && response.data.routes[0].geometry) {
-      const optimizedRoute = response.data.routes[0].geometry;
-      const route = decodePolyline(optimizedRoute);
+    console.log("OSRM Response:", JSON.stringify(response.data, null, 2));
 
-      return res.json({ route });
-    } else {
-      return res.status(500).json({ error: 'Failed to retrieve route from OSRM.' });
+    if (!response.data.trips || response.data.trips.length === 0) {
+      return res.status(500).json({ error: "No optimized route found." });
     }
+
+    // Decode the polyline for the optimized route
+    const optimizedRoute = decodePolyline(response.data.trips[0].geometry);
+    console.log("Optimized Route:", optimizedRoute);
+    return res.json({ optimizedRoute });
+
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Error occurred during route optimization.' });
+    return res.status(500).json({ error: "Error occurred during route optimization." });
   }
 };
 
-// Decode polyline from OSRM
+// Polyline decoder function
 function decodePolyline(polyline) {
   let index = 0, lat = 0, lon = 0;
   const path = [];

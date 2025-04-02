@@ -63,11 +63,12 @@ const MapSingleton = ({ vehicleCoords, serviceCoords, result }) => {
     });
 
     // Add route polyline and fit bounds
-    if (result && result.route && result.route.length > 0) {
-      const polyline = L.polyline(result.route, { color: 'blue', weight: 4 }).addTo(map);
-      const bounds = L.latLngBounds(result.route.map(([lat, lon]) => [lat, lon]));
+    if (result && result.optimizedRoute && result.optimizedRoute.length > 0) {
+      const polyline = L.polyline(result.optimizedRoute, { color: 'blue', weight: 4 }).addTo(map);
+      const bounds = L.latLngBounds(result.optimizedRoute.map(([lat, lon]) => [lat, lon]));
       map.fitBounds(bounds);
-    }
+  }
+  
   }, [vehicleCoords, serviceCoords, result]);
 
   return <div ref={containerRef} style={{ height: '100%', width: '100%' }} />;
@@ -174,8 +175,10 @@ const RouteForm = () => {
 
     try {
       const response = await axios.post('http://localhost:5000/api/optimize-route', payload);
+      console.log("Response from backend:", response.data);
 
-      if (!response.data.route) {
+      if (!response.data.optimizedRoute) {
+
         setError('We cannot travel between these locations via road.');
         setResult(null);
       } else {
