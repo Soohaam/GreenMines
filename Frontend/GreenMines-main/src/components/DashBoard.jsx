@@ -76,7 +76,7 @@ useEffect(() => {
         `http://localhost:5000/api/data/${formattedStartDate}/${formattedEndDate}`
       );
 
-      console.log("Week data:", response.data); // Log for debugging
+      // console.log("Week data:", response.data); // Log for debugging
       setWeekData(response.data); // Set fetched data
       setLoading(false);
     } catch (err) {
@@ -118,7 +118,7 @@ useEffect(() => {
 
   setTotalEmissions(emissions);
 }, [fetchWeekData]);
-console.log("total emission",totalEmissions);
+// console.log("total emission",totalEmissions);
 
 
 
@@ -131,7 +131,7 @@ useEffect(() => {
       
       // Make the API call with the current timestamp
       const response = await axios.get(`http://localhost:5000/api/data/${formattedDate}`);
-      console.log("one day",response.data);
+      // console.log("one day",response.data);
       
       setData(response.data);
       
@@ -145,7 +145,7 @@ useEffect(() => {
 }, []); // Empty dependency array ensures it runs only on page load.
 
 useEffect(() => {
-  console.log(data); // Log the data after it is updated
+  // console.log(data); // Log the data after it is updated
 }, [data]);
 
 if (error) {
