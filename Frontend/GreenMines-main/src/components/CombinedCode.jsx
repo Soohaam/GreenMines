@@ -12,13 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 
 const stateOptions = [
-  "andhra pradesh",
-  "chattisgarh",
-  "jharkhand",
-  "madhya pradesh",
-  "maharashtra",
-  "orissa",
-  "west bengal",
+  'andhra pradesh', 'arunachal pardesh', 'assam', 'bihar', 'chattisgarh',
+  'delhi', 'goa', 'orissa', 'punjab', 'rajasthan',
+  'tamil nadu', 'tripura', 'uttar pradesh', 'uttaranchal', 'west bengal',
+  'gujarat', 'haryana', 'himachal pradesh', 'jammu and kashmir', 'jharkhand',
+  'karnataka', 'kereala', 'madhya pradesh', 'maharashtra', 'manipur',
+  'meghalaya', 'mizoram', 'nagaland'
 ]
 
 /*[
