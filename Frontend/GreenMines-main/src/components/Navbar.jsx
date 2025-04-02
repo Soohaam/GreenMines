@@ -24,7 +24,7 @@ const navigation = [
   { name: "Home", href: "/" },
   { name: "DashBoard", href: "/dashboard" },
   { name: "Carbon Footprint", href: "/emission" },
-  { name: "Neutrality", href: "/neutralityoptions" }
+  { name: "Neutrality", href: "/neutralityoptions" },
 ];
 
 function Navbar({ className }) {
@@ -41,7 +41,6 @@ function Navbar({ className }) {
   }, [location.pathname]);
 
   const handleSignOut = () => {
-    // Implement your sign out logic here
     console.log("Signing out...");
   };
 
@@ -156,6 +155,12 @@ function Navbar({ className }) {
                   onClick={() => navigate("/routing")}
                 >
                   Route
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white py-3 px-6 text-base cursor-pointer"
+                  onClick={() => window.location.href = "http://localhost:8080/simulation"}
+                >
+                  Simulation
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   className="text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white py-3 px-6 text-base cursor-pointer"

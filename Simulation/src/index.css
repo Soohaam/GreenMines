@@ -1,0 +1,102 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 142 72% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 141 43% 64%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 142 72% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 142 72% 45%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Custom components for the simulation */
+  .simulation-panel {
+    @apply bg-simulation-panel rounded-lg shadow-lg p-4;
+  }
+  
+  .control-button {
+    @apply px-4 py-2 rounded-lg text-white font-medium bg-simulation-primary 
+    hover:bg-simulation-secondary transition-colors;
+  }
+  
+  .result-panel {
+    @apply bg-white rounded-lg shadow-lg p-4;
+  }
+  
+  .draggable-item {
+    @apply cursor-move bg-white rounded-lg shadow-md p-2 border-2 
+    border-simulation-primary transition-all hover:shadow-lg;
+  }
+  
+  .progress-bar {
+    @apply w-full h-2 bg-gray-200 rounded-full overflow-hidden;
+  }
+  
+  .progress-bar-inner {
+    @apply h-full bg-simulation-primary transition-all;
+  }
+  
+  .status-badge {
+    @apply px-2 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .status-badge-success {
+    @apply bg-simulation-success text-white;
+  }
+  
+  .status-badge-warning {
+    @apply bg-simulation-warning text-simulation-dark;
+  }
+  
+  .status-badge-danger {
+    @apply bg-simulation-danger text-white;
+  }
+}

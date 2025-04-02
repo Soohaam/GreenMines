@@ -40,7 +40,6 @@ function Enavbar({ className }) {
   }, [location.pathname]);
 
   const handleSignOut = () => {
-    // Implement your sign out logic here
     console.log("Signing out...");
   };
 
@@ -155,6 +154,12 @@ function Enavbar({ className }) {
                   onClick={() => navigate("/routing")}
                 >
                   Route
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white py-3 px-6 text-base cursor-pointer"
+                  onClick={() => window.location.href = "http://localhost:8080/simulation"}
+                >
+                  Simulation
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   className="text-[#66C5CC] hover:bg-gradient-to-br hover:from-[#6664F1] hover:to-[#C94AF0] hover:text-white py-3 px-6 text-base cursor-pointer"
