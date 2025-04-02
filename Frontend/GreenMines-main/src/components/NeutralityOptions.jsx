@@ -3,7 +3,6 @@
 import ChatAssistant from "./ChatAssistant";
 import Enavbar from "./Enavbar";
 import Footer from "./Footer";
-import Navbar from "./Navbar";
 import { TreesIcon as Tree, Sun, Cloud, Leaf } from 'lucide-react';
 
 
@@ -41,14 +40,14 @@ export default function CarbonNeutralityOptions() {
       impact: 1800,
       detailsUrl: "/afolu",
     },
-    {
-      icon: <Cloud className="w-12 h-12 text-[#66C5CC]" />,
-      title: "Emissions Impact Analyzer",
-      description: "Agriculture, Forestry, and Other Land Use practices to reduce emissions and enhance carbon sequestration.",
-      effectiveness: 48,
-      impact: 1800,
-      detailsUrl: "/emissions-analysis",
-    },
+    // {
+    //   icon: <Cloud className="w-12 h-12 text-[#66C5CC]" />,
+    //   title: "Emissions Impact Analyzer",
+    //   description: "Agriculture, Forestry, and Other Land Use practices to reduce emissions and enhance carbon sequestration.",
+    //   effectiveness: 48,
+    //   impact: 1800,
+    //   detailsUrl: "/emissions-analysis",
+    // },
     {
       icon: <Tree className="w-12 h-12 text-[#66C5CC]" />,
       title: "EV Fuel Saver",

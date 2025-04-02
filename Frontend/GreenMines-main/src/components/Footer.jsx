@@ -146,7 +146,7 @@ function Footer() {
             <p>Terms of Use</p>
           </div>
           <div className="text-[#696984] lg:justify-end justify-start pt-4 flex md:justify-start md:pt-4 text-xs md:text-base lg:pt-0">
-            © 2024-Present, All Rights Reserved
+            © 2025-Present, All Rights Reserved
           </div>
         </motion.div>
       </motion.div>

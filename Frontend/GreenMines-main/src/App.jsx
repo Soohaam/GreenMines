@@ -64,7 +64,7 @@ function App() {
             {/* <Companies id="about" /> */}
             <Services id="services" />
             {/* <Experience /> */}
-            <Projects id="projects" />
+            {/* <Projects id="projects" /> */}
             <MarqueeReviews/>
             {/* <Clients /> */}
             <Footer />

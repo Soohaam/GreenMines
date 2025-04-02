@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button"; // Shadcn/ui Button
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Shadcn/ui Card
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"; // Shadcn/ui HoverCard
+import { HoverCard, HoverCardTrigger } from "@/components/ui/hover-card"; // Shadcn/ui HoverCard
 import Navbar from "./Navbar";
 
 function Header() {
@@ -95,9 +95,7 @@ function Header() {
                       Get Started Now
                     </Button>
                   </HoverCardTrigger>
-                  <HoverCardContent className="text-sm">
-                    Start your journey towards sustainability today!
-                  </HoverCardContent>
+      
                 </HoverCard>
               </CardContent>
             </Card>
@@ -139,48 +137,7 @@ function Header() {
           }}
           className="fixed right-4 top-4 z-50 sm:right-6"
         >
-          <Button
-            variant="outline"
-            size="lg"
-            className="relative rounded-full bg-gradient-to-r from-[#66C5CC] to-[#009688] px-6 py-3 text-sm font-bold text-black shadow-xl transition-all hover:shadow-2xl sm:text-base"
-            onClick={() => navigate("/login")}
-          >
-            <motion.span
-              initial={{ width: 0 }}
-              animate={{
-                width: "100%",
-                transition: {
-                  delay: 0.6,
-                  duration: 0.8,
-                  type: "spring",
-                },
-              }}
-              className="absolute inset-0 bg-gradient-to-r from-[#66C5CC] to-[#009688] opacity-20 transition-all duration-300 group-hover:opacity-40"
-            />
-            <motion.span
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{
-                opacity: [0, 1, 0],
-                scale: [0, 1.2, 0],
-                rotate: [0, 360],
-                transition: {
-                  delay: 0.7,
-                  duration: 1.5,
-                  repeat: Infinity,
-                },
-              }}
-              className="absolute right-0 top-0 h-4 w-4 rounded-full bg-white opacity-70 sm:h-4 sm:w-4"
-            />
-            <motion.span
-              initial={{ letterSpacing: "0px" }}
-              whileHover={{
-                letterSpacing: "1px",
-                transition: { duration: 0.3 },
-              }}
-            >
-              Sign In
-            </motion.span>
-          </Button>
+          
         </motion.div>
       </div>
     </div>
