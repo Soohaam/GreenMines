@@ -21,7 +21,7 @@ function NeutralityForm() {
       vegetationType: 'tropical_rainforest', 
       treeSpecies: ['Teak', 'Sal', 'Banyan'], 
       seedingTime: { 
-        startDate: '2024-06-15', 
+        startDate: '2025-01-15', 
         expectedMaturityPeriod: 25,
         carbonSequestrationRateAtMaturity: 8.5
       }
@@ -34,7 +34,7 @@ function NeutralityForm() {
       vegetationType: 'tropical_rainforest', 
       treeSpecies: ['Rosewood', 'Kerala Pine', 'Wild Mango'], 
       seedingTime: { 
-        startDate: '2024-07-01', 
+        startDate: '2025-02-01', 
         expectedMaturityPeriod: 30,
         carbonSequestrationRateAtMaturity: 9.2
       }
@@ -47,7 +47,7 @@ function NeutralityForm() {
       vegetationType: 'temperate_forest', 
       treeSpecies: ['Himalayan Oak', 'Cedar', 'Rhododendron'], 
       seedingTime: { 
-        startDate: '2024-05-20', 
+        startDate: '2025-05-02', 
         expectedMaturityPeriod: 40,
         carbonSequestrationRateAtMaturity: 5.5
       }
@@ -60,7 +60,7 @@ function NeutralityForm() {
       vegetationType: 'mangrove', 
       treeSpecies: ['Sundari', 'Gewa', 'Keora'], 
       seedingTime: { 
-        startDate: '2024-08-10', 
+        startDate: '2025-01-10', 
         expectedMaturityPeriod: 20,
         carbonSequestrationRateAtMaturity: 6.8
       }
@@ -73,7 +73,7 @@ function NeutralityForm() {
       vegetationType: 'savanna', 
       treeSpecies: ['Neem', 'Tamarind', 'Acacia'], 
       seedingTime: { 
-        startDate: '2024-06-30', 
+        startDate: '2025-02-30', 
         expectedMaturityPeriod: 15,
         carbonSequestrationRateAtMaturity: 3.5
       }
@@ -443,13 +443,13 @@ function NeutralityForm() {
       
         {/* Display Result */}
         {result && (
-          <Card className="mt-10 border border-[#66C5CC] w-full max-w-4xl bg-[#342F49] text-[#cad9ed]">
+          <Card className="mt-10 border border-[#66C5CC] w-full max-w-4xl bg-[#342F49] text-[#d5d7da]">
             <CardContent className="p-8">
               <h2 className="text-4xl font-semibold text-[#66C5CC] mb-6 text-center">Carbon Sink Analysis Result</h2>
               
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Sequestration Details */}
-                <Card className="bg-[#2B263F] border-[#66C5CC] border-opacity-50">
+                <Card className="bg-[#2B263F] border-[#66C5CC] border-opacity-50 text-[#cad9ed]">
                   <CardContent className="p-6">
                     <h3 className="text-2xl text-[#66C5CC] mb-4">Sequestration Metrics</h3>
                     <p className="mb-2"><strong>Daily Sequestration Rate:</strong> {result.dailySequestrationRate} tons CO2</p>
@@ -459,7 +459,7 @@ function NeutralityForm() {
 
                 {/* Location Details */}
                 {result.mockLocation && (
-                  <Card className="bg-[#2B263F] border-[#66C5CC] border-opacity-50">
+                  <Card className="bg-[#2B263F] border-[#66C5CC] border-opacity-50 text-[#cad9ed]">
                     <CardContent className="p-6">
                       <h3 className="text-2xl text-[#66C5CC] mb-4">Location Information</h3>
                       <p><strong>Region:</strong> {result.mockLocation.region}</p>
@@ -474,7 +474,7 @@ function NeutralityForm() {
 
               {/* Seeding Time Details */}
               {result.mockLocation?.seedingTime && (
-                <Card className="mt-6 bg-[#2B263F] border-[#66C5CC] border-opacity-50">
+                <Card className="mt-6 bg-[#2B263F] border-[#66C5CC] border-opacity-50 text-[#cad9ed]">
                   <CardContent className="p-6">
                     <h3 className="text-2xl text-[#66C5CC] mb-4">Seeding and Growth Information</h3>
                     <p><strong>Seeding Start Date:</strong> {result.mockLocation.seedingTime.startDate}</p>
