@@ -586,14 +586,12 @@ const Simulation = () => {
             </button>
             
             <button 
-              className="flex items-center px-4 py-2 bg-white text-green-700 rounded-lg hover:bg-green-50 transition-colors text-sm"
-              onClick={() => {
-                toast.info("Help: Select a mine and explore its emissions. Add mitigation strategies using the control panel.");
-              }}
-            >
-              <Info className="w-4 h-4 mr-1" />
-              Help
-            </button>
+         className="flex items-center px-4 py-2 bg-white text-green-700 rounded-lg hover:bg-green-50 transition-colors text-sm"
+         onClick={() => window.history.back()}
+       >
+         <ArrowLeft className="w-4 h-4 mr-1" />
+         Go Back
+       </button>
           </div>
         </div>
       </header>
