@@ -538,6 +538,7 @@ const Simulation = () => {
         setEmissionFactors(prev => ({
           ...prev,
           electricity: {
+            ...prev.electricity,
             energyPerTime: baseElectricity,
             responsibleArea: 40 + (mineIndex * 15),
             totalArea: 100
@@ -585,130 +586,129 @@ const Simulation = () => {
             </button>
             
             <button 
-        className="flex items-center px-4 py-2 bg-white text-green-700 rounded-lg hover:bg-green-50 transition-colors text-sm"
-        onClick={() => window.history.back()}
-      >
-        <ArrowLeft className="w-4 h-4 mr-1" />
-        Go Back
-      </button>
+              className="flex items-center px-4 py-2 bg-white text-green-700 rounded-lg hover:bg-green-50 transition-colors text-sm"
+              onClick={() => {
+                toast.info("Help: Select a mine and explore its emissions. Add mitigation strategies using the control panel.");
+              }}
+            >
+              <Info className="w-4 h-4 mr-1" />
+              Help
+            </button>
           </div>
         </div>
       </header>
       
       {/* Main Content with Flexible Layout */}
-      <div className="flex-1 flex">
+      <ResizablePanelGroup direction="horizontal" className="flex-1 h-full">
         {/* Control Panel - Left sidebar */}
-        <div className={`w-[320px] flex-shrink-0 transition-all duration-300 ${controlCollapsed ? '-ml-[320px]' : ''}`}>
-          <ControlPanel 
-            selectedMine={selectedMine}
-            setSelectedMine={setSelectedMine}
-            onAddTree={handleAddTree}
-            onAddRenewable={handleAddRenewable}
-            onAddCcs={handleAddCcs}
-            onAddExplosive={handleAddExplosive}
-            onDetonateExplosive={handleDetonateExplosive}
-            onUpdateEmissionFactors={handleUpdateEmissionFactors}
-            onApplyCarbonSink={handleApplyCarbonSink}
-            onApplyRenewable={handleApplyRenewable}
-            onApplyCcs={handleApplyCcs}
-            activeItem={activeItem}
-            setActiveItem={setActiveItem}
-            placementMode={placementMode}
-            setPlacementMode={setPlacementMode}
-            cancelPlacement={handleCancelPlacement}
-            onActivatePlacement={handleActivatePlacement}
-            onResetSimulation={handleResetSimulation}
-          />
-        </div>
+        <ResizablePanel defaultSize={20} minSize={15} maxSize={30} className="flex-shrink-0">
+          <div className={`h-full transition-all duration-300`}>
+            <ControlPanel 
+              selectedMine={selectedMine}
+              setSelectedMine={setSelectedMine}
+              onAddTree={handleAddTree}
+              onAddRenewable={handleAddRenewable}
+              onAddCcs={handleAddCcs}
+              onAddExplosive={handleAddExplosive}
+              onDetonateExplosive={handleDetonateExplosive}
+              onUpdateEmissionFactors={handleUpdateEmissionFactors}
+              onApplyCarbonSink={handleApplyCarbonSink}
+              onApplyRenewable={handleApplyRenewable}
+              onApplyCcs={handleApplyCcs}
+              activeItem={activeItem}
+              setActiveItem={setActiveItem}
+              placementMode={placementMode}
+              setPlacementMode={setPlacementMode}
+              cancelPlacement={handleCancelPlacement}
+              onActivatePlacement={handleActivatePlacement}
+              onResetSimulation={handleResetSimulation}
+            />
+          </div>
+        </ResizablePanel>
+
+        <ResizableHandle withHandle className="bg-gray-200 hover:bg-gray-300">
+          <div className="flex flex-col h-full justify-center items-center">
+            <div className="w-1 h-8 rounded-full bg-gray-400"></div>
+          </div>
+        </ResizableHandle>
           
         {/* Map and Results Section */}
-        <div className="flex flex-1 flex-col relative">
-          {/* Toggle button for control panel */}
-          <button 
-            className="absolute top-4 left-4 z-30 bg-white rounded-full shadow-md p-2 hover:bg-gray-100 transition-colors"
-            onClick={() => setControlCollapsed(!controlCollapsed)}
-            aria-label={controlCollapsed ? "Show control panel" : "Hide control panel"}
-          >
-            {controlCollapsed ? (
-              <ChevronRight className="h-5 w-5 text-gray-700" />
-            ) : (
-              <ChevronLeft className="h-5 w-5 text-gray-700" />
-            )}
-          </button>
-          
-          {/* Vertical resizable layout */}
-          <ResizablePanelGroup direction="vertical" className="h-full">
-            {/* Map area - takes up most of the space */}
-            <ResizablePanel defaultSize={75} minSize={30}>
-              <div className="h-full relative">
-                <SimulationMap 
-                  selectedMine={selectedMine}
-                  setSelectedMine={setSelectedMine}
-                  trees={trees}
-                  renewables={renewables}
-                  ccs={ccsFacilities}
-                  explosives={explosives}
-                  shipments={shipments}
-                  emissions={netEmissions}
-                  setMapInstance={setMapInstance}
-                  activeItem={activeItem}
-                  onItemPlace={handleItemPlace}
-                  placementMode={placementMode}
-                  setPlacementMode={setPlacementMode}
-                  setActiveItem={setActiveItem}
-                  onDetonateExplosive={handleDetonateExplosive}
-                  placementConfig={placementConfig}
-                  onAddShipment={handleAddShipment}
-                  onResetSimulation={handleResetSimulation}
-                  showHeatmap={showHeatmap}
-                />
-              </div>
-            </ResizablePanel>
-            
-            {/* Resizable handle with toggle button */}
-            <ResizableHandle withHandle className="bg-gray-200 hover:bg-gray-300">
-              <div className="flex justify-center py-1">
-                <button 
-                  onClick={() => setResultsCollapsed(!resultsCollapsed)}
-                  className="focus:outline-none"
-                  aria-label={resultsCollapsed ? "Expand results" : "Collapse results"}
-                >
-                  {resultsCollapsed ? <ChevronUp className="h-4 w-4 text-gray-600" /> : <ChevronDown className="h-4 w-4 text-gray-600" />}
-                </button>
-              </div>
-            </ResizableHandle>
-            
-            {/* Results panel area - can be resized by user */}
-            <ResizablePanel defaultSize={25} minSize={15} maxSize={50}>
-              <div className="h-full border-t border-gray-200 shadow-lg overflow-hidden">
-                <div className="flex justify-between items-center px-4 py-2 bg-gradient-to-r from-green-50 to-blue-50 border-b border-gray-200 sticky top-0 z-20">
-                  <h3 className="text-lg font-bold text-gray-800 flex items-center">
-                    <BarChart className="mr-2 h-5 w-5 text-green-600" />
-                    Emission Results
-                  </h3>
-                  <button
-                    className="p-1 hover:bg-gray-200 rounded-full"
+        <ResizablePanel defaultSize={80} className="flex flex-col">
+          <div className="flex flex-1 flex-col relative">
+            {/* Vertical resizable layout */}
+            <ResizablePanelGroup direction="vertical" className="h-full">
+              {/* Map area - takes up most of the space */}
+              <ResizablePanel defaultSize={75} minSize={30}>
+                <div className="h-full relative">
+                  <SimulationMap 
+                    selectedMine={selectedMine}
+                    setSelectedMine={setSelectedMine}
+                    trees={trees}
+                    renewables={renewables}
+                    ccs={ccsFacilities}
+                    explosives={explosives}
+                    shipments={shipments}
+                    emissions={netEmissions}
+                    setMapInstance={setMapInstance}
+                    activeItem={activeItem}
+                    onItemPlace={handleItemPlace}
+                    placementMode={placementMode}
+                    setPlacementMode={setPlacementMode}
+                    setActiveItem={setActiveItem}
+                    onDetonateExplosive={handleDetonateExplosive}
+                    placementConfig={placementConfig}
+                    onAddShipment={handleAddShipment}
+                    onResetSimulation={handleResetSimulation}
+                    showHeatmap={showHeatmap}
+                  />
+                </div>
+              </ResizablePanel>
+              
+              {/* Resizable handle with toggle button */}
+              <ResizableHandle withHandle className="bg-gray-200 hover:bg-gray-300">
+                <div className="flex justify-center py-1">
+                  <button 
                     onClick={() => setResultsCollapsed(!resultsCollapsed)}
+                    className="focus:outline-none"
                     aria-label={resultsCollapsed ? "Expand results" : "Collapse results"}
                   >
-                    {resultsCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+                    {resultsCollapsed ? <ChevronUp className="h-4 w-4 text-gray-600" /> : <ChevronDown className="h-4 w-4 text-gray-600" />}
                   </button>
                 </div>
-                
-                {!resultsCollapsed && (
-                  <ResultsPanel 
-                    emissions={emissions}
-                    reductions={reductions}
-                    netEmissions={netEmissions}
-                    shipments={shipments}
-                    selectedMine={selectedMine}
-                  />
-                )}
-              </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        </div>
-      </div>
+              </ResizableHandle>
+              
+              {/* Results panel area - can be resized by user */}
+              <ResizablePanel defaultSize={25} minSize={15} maxSize={50}>
+                <div className="h-full border-t border-gray-200 shadow-lg overflow-hidden">
+                  <div className="flex justify-between items-center px-4 py-2 bg-gradient-to-r from-green-50 to-blue-50 border-b border-gray-200 sticky top-0 z-20">
+                    <h3 className="text-lg font-bold text-gray-800 flex items-center">
+                      <BarChart className="mr-2 h-5 w-5 text-green-600" />
+                      Emission Results
+                    </h3>
+                    <button
+                      className="p-1 hover:bg-gray-200 rounded-full"
+                      onClick={() => setResultsCollapsed(!resultsCollapsed)}
+                      aria-label={resultsCollapsed ? "Expand results" : "Collapse results"}
+                    >
+                      {resultsCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  
+                  {!resultsCollapsed && (
+                    <ResultsPanel 
+                      emissions={emissions}
+                      reductions={reductions}
+                      netEmissions={netEmissions}
+                      shipments={shipments}
+                      selectedMine={selectedMine}
+                    />
+                  )}
+                </div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };

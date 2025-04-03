@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { COAL_MINES, getRandomLocationNearMine, generateUniqueId } from '../utils/mapUtils';
 import { calculateCarbonSink } from '../utils/emissionCalculations';
 import { toast } from 'sonner';
+import { Slider } from './ui/slider'; 
 
 const CarbonSinks = ({ selectedMine, onAddTree, onApplyCarbonSink, onActivatePlacement }) => {
   const [vegetationType, setVegetationType] = useState('Tropical forest');
@@ -49,6 +50,11 @@ const CarbonSinks = ({ selectedMine, onAddTree, onApplyCarbonSink, onActivatePla
     const sinkData = calculateCarbonSink(vegetationType, area);
     onApplyCarbonSink(sinkData);
     
+    // Play planting sound
+    const plantingSound = new Audio('/planting_sound.mp3');
+    plantingSound.volume = 0.2;
+    plantingSound.play().catch(e => console.log("Audio play failed:", e));
+    
     if (seedingTime === 0) {
       toast.success(`${vegetationType} planted and actively capturing carbon!`);
     } else {
@@ -59,6 +65,12 @@ const CarbonSinks = ({ selectedMine, onAddTree, onApplyCarbonSink, onActivatePla
   
   const handleAccelerateGrowth = () => {
     if (!treesPlanted) return;
+    
+    // Play growth acceleration sound
+    const growthSound = new Audio('/planting_sound.mp3');
+    growthSound.playbackRate = 1.5;
+    growthSound.volume = 0.3;
+    growthSound.play().catch(e => console.log("Audio play failed:", e));
     
     // Apply full sequestration rate when accelerating growth
     const sinkData = calculateCarbonSink(vegetationType, area);
@@ -113,41 +125,39 @@ const CarbonSinks = ({ selectedMine, onAddTree, onApplyCarbonSink, onActivatePla
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Area (hectares)
+          <label className="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
+            <span>Area (hectares)</span>
+            <span className="text-simulation-primary font-bold">{area} ha</span>
           </label>
-          <input
-            type="range"
-            min="1"
-            max="100"
-            step="1"
-            value={area}
-            onChange={(e) => setArea(parseInt(e.target.value))}
-            className="w-full"
+          <Slider
+            min={1}
+            max={100}
+            step={1}
+            value={[area]}
+            onValueChange={(value) => setArea(value[0])}
+            className="py-2"
           />
           <div className="flex justify-between text-xs text-gray-500">
             <span>1 ha</span>
-            <span>{area} ha</span>
             <span>100 ha</span>
           </div>
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Seeding Time (years)
+          <label className="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
+            <span>Seeding Time (years)</span>
+            <span className="text-simulation-primary font-bold">{seedingTime} years</span>
           </label>
-          <input
-            type="range"
-            min="0"
-            max="10"
-            step="1"
-            value={seedingTime}
-            onChange={(e) => setSeedingTime(parseInt(e.target.value))}
-            className="w-full"
+          <Slider
+            min={0}
+            max={10}
+            step={1}
+            value={[seedingTime]}
+            onValueChange={(value) => setSeedingTime(value[0])}
+            className="py-2"
           />
           <div className="flex justify-between text-xs text-gray-500">
             <span>Instant</span>
-            <span>{seedingTime} years</span>
             <span>10 years</span>
           </div>
         </div>

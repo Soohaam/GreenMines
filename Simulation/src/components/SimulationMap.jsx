@@ -72,13 +72,61 @@ const ccsIcon = createCustomIcon('CloudCog', 'white', '#9C27B0');
 const explosiveIcon = createCustomIcon('Bomb', 'white', '#F44336');
 const truckIcon = createCustomIcon('Truck', 'white', '#607D8B');
 
-// Explosion Animation Component
+const HeatMapLayer = ({ data, visible }) => {
+  const map = useMap();
+  const layerRef = useRef(null);
+  
+  useEffect(() => {
+    if (!visible || !data || data.length === 0) {
+      if (layerRef.current) {
+        map.removeLayer(layerRef.current);
+        layerRef.current = null;
+      }
+      return;
+    }
+    
+    if (layerRef.current) {
+      map.removeLayer(layerRef.current);
+    }
+    
+    // Create heat map layer with gradient colors
+    layerRef.current = L.heatLayer(data, {
+      radius: 30,
+      blur: 25,
+      maxZoom: 10,
+      gradient: {
+        0.0: 'blue',
+        0.3: 'lime',
+        0.5: 'yellow',
+        0.7: 'orange', 
+        1.0: 'red'
+      }
+    }).addTo(map);
+    
+    return () => {
+      if (layerRef.current) {
+        map.removeLayer(layerRef.current);
+      }
+    };
+  }, [map, data, visible]);
+  
+  return null;
+};
+
 const ExplosionAnimation = ({ position, radius, onAnimationEnd }) => {
   const [currentRadius, setCurrentRadius] = useState(0);
   const [opacity, setOpacity] = useState(0.8);
+  const [ring1, setRing1] = useState(0);
+  const [ring2, setRing2] = useState(0);
+  const [shockwave, setShockwave] = useState(false);
   const map = useMap();
   
   useEffect(() => {
+    // Play explosion sound
+    const explosionSound = new Audio('/explosion_sound.mp3');
+    explosionSound.volume = 0.3;
+    explosionSound.play().catch(e => console.log("Audio play failed:", e));
+    
     let animationFrame;
     const startTime = Date.now();
     const duration = 1500; // 1.5 seconds
@@ -87,9 +135,18 @@ const ExplosionAnimation = ({ position, radius, onAnimationEnd }) => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
-      // Use getValidRadius to ensure no NaN values
+      // First ring (main blast)
       setCurrentRadius(getValidRadius(radius * progress, 100));
       setOpacity(0.8 * (1 - progress));
+      
+      // Secondary ring effects
+      setRing1(getValidRadius(radius * progress * 0.7, 100));
+      setRing2(getValidRadius(radius * progress * 0.4, 100));
+      
+      // Shockwave effect
+      if (progress > 0.2 && !shockwave) {
+        setShockwave(true);
+      }
       
       if (progress < 1) {
         animationFrame = requestAnimationFrame(animate);
@@ -106,89 +163,133 @@ const ExplosionAnimation = ({ position, radius, onAnimationEnd }) => {
   }, [radius, onAnimationEnd]);
   
   return (
-    <Circle
-      center={position}
-      radius={getValidRadius(currentRadius, 100)}
-      pathOptions={{
-        color: '#FF5722',
-        fillColor: '#FF9800',
-        fillOpacity: opacity,
-        weight: 2,
-      }}
-    />
+    <>
+      {/* Main explosion circle */}
+      <Circle
+        center={position}
+        radius={getValidRadius(currentRadius, 100)}
+        pathOptions={{
+          color: '#FF5722',
+          fillColor: '#FF9800',
+          fillOpacity: opacity,
+          weight: 2,
+        }}
+      />
+      
+      {/* Inner colored rings for more dynamic effect */}
+      <Circle
+        center={position}
+        radius={ring1}
+        pathOptions={{
+          color: '#FFEB3B',
+          fillColor: '#FFC107',
+          fillOpacity: opacity * 0.7,
+          weight: 1,
+        }}
+      />
+      
+      <Circle
+        center={position}
+        radius={ring2}
+        pathOptions={{
+          color: '#FFFFFF',
+          fillColor: '#FFEB3B',
+          fillOpacity: opacity * 0.9,
+          weight: 1,
+        }}
+      />
+      
+      {/* Shockwave effect */}
+      {shockwave && (
+        <Circle
+          center={position}
+          radius={currentRadius * 1.2}
+          pathOptions={{
+            color: '#FF5722',
+            fillOpacity: 0,
+            weight: 2,
+            dashArray: '5, 10',
+            opacity: opacity * 0.5
+          }}
+        />
+      )}
+    </>
   );
 };
 
-// HeatMap Layer Component
-const HeatMapLayer = ({ data, visible }) => {
+const TreePlantingAnimation = ({ position, radius, onAnimationEnd }) => {
+  const [currentRadius, setCurrentRadius] = useState(0);
+  const [opacity, setOpacity] = useState(0.8);
+  const [pulse, setPulse] = useState(0);
   const map = useMap();
-  const [heatLayer, setHeatLayer] = useState(null);
   
   useEffect(() => {
-    if (!visible) {
-      if (heatLayer) {
-        map.removeLayer(heatLayer);
-        setHeatLayer(null);
-      }
-      return;
-    }
+    // Play planting sound
+    const plantingSound = new Audio('/planting_sound.mp3');
+    plantingSound.volume = 0.2;
+    plantingSound.play().catch(e => console.log("Audio play failed:", e));
     
-    // If no heatmap data, don't proceed
-    if (!data || !data.length) return;
+    let animationFrame;
+    const startTime = Date.now();
+    const duration = 2000; // 2 seconds
     
-    // Remove existing heat layer if it exists
-    if (heatLayer) {
-      map.removeLayer(heatLayer);
-    }
-    
-    try {
-      // Create heat data points - making sure values are properly formatted
-      const points = data.map(point => [
-        Number(point.lat) || 0, 
-        Number(point.lng) || 0, 
-        Number(point.value) || 0.5 // Default value if none provided
-      ]);
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
       
-      // Check if leaflet.heat is properly loaded and available
-      if (typeof L.heatLayer === 'function') {
-        // Add new heat layer with enhanced settings
-        const newHeatLayer = L.heatLayer(points, {
-          radius: 35, // Radius for better visibility
-          blur: 25,   // Blur for smoother transitions
-          maxZoom: 10,
-          max: 1.0,
-          minOpacity: 0.4, // Minimum opacity for better visibility
-          gradient: {
-            0.1: 'blue',
-            0.3: 'cyan',
-            0.5: 'lime',
-            0.7: 'yellow',
-            0.8: 'orange',
-            1.0: 'red'
-          }
-        }).addTo(map);
-        
-        setHeatLayer(newHeatLayer);
+      // Growing animation
+      setCurrentRadius(getValidRadius(radius * progress, 50));
+      
+      // Fade in then stabilize
+      setOpacity(progress < 0.5 ? progress * 1.6 : 0.8);
+      
+      // Pulsing effect
+      setPulse(Math.sin(progress * Math.PI * 4) * 10);
+      
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
       } else {
-        console.error("L.heatLayer is not available. Check if leaflet.heat is properly loaded.");
-        toast.error("Heatmap functionality is not available");
-      }
-    } catch (error) {
-      console.error("Error creating heatmap layer:", error);
-      toast.error("Error creating heatmap: " + error.message);
-    }
-    
-    return () => {
-      if (heatLayer) {
-        map.removeLayer(heatLayer);
+        if (onAnimationEnd) onAnimationEnd();
       }
     };
-  }, [map, data, visible]);
+    
+    animationFrame = requestAnimationFrame(animate);
+    
+    return () => {
+      cancelAnimationFrame(animationFrame);
+    };
+  }, [radius, onAnimationEnd]);
   
-  return null;
+  return (
+    <>
+      {/* Main growth circle */}
+      <Circle
+        center={position}
+        radius={getValidRadius(currentRadius, 50)}
+        pathOptions={{
+          color: '#2E7D32',
+          fillColor: '#4CAF50',
+          fillOpacity: opacity * 0.2,
+          weight: 2,
+        }}
+      />
+      
+      {/* Pulsing aura effect */}
+      <Circle
+        center={position}
+        radius={getValidRadius(currentRadius + pulse, 50)}
+        pathOptions={{
+          color: '#81C784',
+          fillColor: '#A5D6A7',
+          fillOpacity: opacity * 0.1,
+          weight: 1,
+          dashArray: '3, 6'
+        }}
+      />
+    </>
+  );
 };
 
-// MapUpdater component to handle map state changes
 const MapUpdater = ({ selectedMine, mines, setMapInstance }) => {
   const map = useMap();
   
@@ -209,7 +310,6 @@ const MapUpdater = ({ selectedMine, mines, setMapInstance }) => {
   return null;
 };
 
-// MapClickHandler component to handle map clicks
 const MapClickHandler = ({ 
   activeItem, 
   onItemPlace, 
@@ -337,7 +437,6 @@ const PlacementIndicator = ({ placementMode, activeItem, placementConfig }) => {
   );
 };
 
-// Enhanced route visualization to look like roads/railways
 const RouteVisualization = ({ shipment }) => {
   if (!shipment || !shipment.route || !shipment.route.waypoints) {
     return null;
@@ -436,7 +535,6 @@ const RouteVisualization = ({ shipment }) => {
   );
 };
 
-// Location search component - Compact UI
 const LocationSearch = ({ onSelectDestination }) => {
   const [searchText, setSearchText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -552,13 +650,15 @@ const SimulationMap = ({
   onDetonateExplosive,
   placementConfig,
   onAddShipment,
-  onResetSimulation
+  onResetSimulation,
+  showHeatmap
 }) => {
   const [activeExplosions, setActiveExplosions] = useState([]);
-  const [showHeatmap, setShowHeatmap] = useState(false);
+  const [showHeatmapState, setShowHeatmapState] = useState(showHeatmap);
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [showShipmentModal, setShowShipmentModal] = useState(false);
   const [shipmentRoute, setShipmentRoute] = useState(null);
+  const [treePlantings, setTreePlantings] = useState([]);
   const mapRef = useRef(null);
   
   // Generate enhanced heatmap data based on each mine's emission data
@@ -586,6 +686,10 @@ const SimulationMap = ({
   
   const handleExplosionComplete = (explosionId) => {
     setActiveExplosions(prev => prev.filter(e => e.id !== explosionId));
+  };
+
+  const handleTreePlantingComplete = (treePlantingId) => {
+    setTreePlantings(prev => prev.filter(t => t.id !== treePlantingId));
   };
   
   const handleDestinationSelect = (destination) => {
@@ -631,7 +735,7 @@ const SimulationMap = ({
       });
       
       // Hide heatmap when resetting view
-      setShowHeatmap(false);
+      setShowHeatmapState(false);
       
       toast.success("Map view reset");
     }
@@ -644,17 +748,35 @@ const SimulationMap = ({
       setMapInstance(map);
     }
   }, [setMapInstance]);
+
+  // Handle item placement with animations
+  const originalOnItemPlace = onItemPlace;
+  const enhancedOnItemPlace = useCallback((item) => {
+    if (originalOnItemPlace) {
+      originalOnItemPlace(item);
+      
+      // Add tree planting animation if tree is being placed
+      if (item.type === 'tree') {
+        const radius = placementConfig?.area ? getValidRadius(placementConfig.area * 10, 20) : 20;
+        setTreePlantings(prev => [...prev, {
+          id: Date.now().toString(),
+          position: item.position,
+          radius: radius
+        }]);
+      }
+    }
+  }, [originalOnItemPlace, placementConfig]);
   
   return (
-<div className="h-full w-full overflow-hidden rounded-lg shadow-lg relative">
-  <MapContainer 
-    center={INDIA_CENTER} 
-    zoom={5} 
-    style={{ height: '100%', width: '100%' }}
-    zoomControl={false}
-    className={`${placementMode ? 'cursor-crosshair' : 'cursor-grab'}`}
-    whenCreated={setMap}
-  >
+    <div className="h-full w-full overflow-hidden rounded-lg shadow-lg relative">
+      <MapContainer 
+        center={INDIA_CENTER} 
+        zoom={5} 
+        style={{ height: '100%', width: '100%' }}
+        zoomControl={false}
+        className={`${placementMode ? 'cursor-crosshair' : 'cursor-grab'}`}
+        whenCreated={setMap}
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -668,7 +790,7 @@ const SimulationMap = ({
         
         <MapClickHandler 
           activeItem={activeItem}
-          onItemPlace={onItemPlace}
+          onItemPlace={enhancedOnItemPlace}
           selectedMine={selectedMine}
           setSelectedMine={setSelectedMine}
           setActiveItem={setActiveItem}
@@ -683,7 +805,7 @@ const SimulationMap = ({
         />
         
         {/* Heatmap layer */}
-        <HeatMapLayer data={heatmapData} visible={showHeatmap} />
+        <HeatMapLayer data={heatmapData} visible={showHeatmapState} />
         
         {/* Render coal mines with area visualization */}
         {COAL_MINES.map(mine => (
@@ -923,6 +1045,16 @@ const SimulationMap = ({
           />
         ))}
         
+        {/* Render active tree planting animations */}
+        {treePlantings.map(treePlanting => (
+          <TreePlantingAnimation
+            key={treePlanting.id}
+            position={treePlanting.position}
+            radius={treePlanting.radius}
+            onAnimationEnd={() => handleTreePlantingComplete(treePlanting.id)}
+          />
+        ))}
+        
         {/* Show detonated explosives blast radius */}
         {explosives.filter(e => e.detonated).map(explosive => (
           <Circle
@@ -953,9 +1085,9 @@ const SimulationMap = ({
         {/* Heatmap toggle button */}
         <Button 
           className={`h-10 w-10 rounded-full shadow-lg flex items-center justify-center
-            ${showHeatmap ? 'bg-orange-500 text-white hover:bg-orange-600' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
-          onClick={() => setShowHeatmap(!showHeatmap)}
-          title={showHeatmap ? "Hide Emission Heatmap" : "Show Emission Heatmap"}
+            ${showHeatmapState ? 'bg-orange-500 text-white hover:bg-orange-600' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+          onClick={() => setShowHeatmapState(!showHeatmapState)}
+          title={showHeatmapState ? "Hide Emission Heatmap" : "Show Emission Heatmap"}
         >
           <BarChart3 className="h-5 w-5" />
         </Button>
@@ -1016,7 +1148,7 @@ const SimulationMap = ({
             <span>Industrial Area</span>
           </div>
           {/* Heatmap legend */}
-          {showHeatmap && (
+          {showHeatmapState && (
             <div className="mt-2 pt-2 border-t border-gray-200">
               <div className="font-medium mb-1">Emissions Intensity</div>
               <div className="h-2 w-full bg-gradient-to-r from-blue-500 via-green-500 via-yellow-500 to-red-500 rounded"></div>

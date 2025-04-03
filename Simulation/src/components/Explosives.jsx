@@ -4,6 +4,7 @@ import { Bomb, Triangle, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { generateUniqueId } from '../utils/mapUtils';
+import { Slider } from './ui/slider';
 
 const Explosives = ({ 
   selectedMine, 
@@ -45,6 +46,11 @@ const Explosives = ({
     
     if (undetonatedExplosives.length === 0) return;
     
+    // Play explosion sound
+    const explosionSound = new Audio('/explosion_sound.mp3');
+    explosionSound.volume = 0.4;
+    explosionSound.play().catch(e => console.log("Audio play failed:", e));
+    
     // Mark all as detonated
     const updatedExplosives = explosives.map(e => 
       !e.detonated ? { ...e, detonated: true } : e
@@ -60,6 +66,11 @@ const Explosives = ({
     // Find the explosive
     const explosive = explosives.find(e => e.id === id);
     if (!explosive || explosive.detonated) return;
+    
+    // Play explosion sound
+    const explosionSound = new Audio('/explosion_sound.mp3');
+    explosionSound.volume = 0.3;
+    explosionSound.play().catch(e => console.log("Audio play failed:", e));
     
     // Mark as detonated
     const updatedExplosives = explosives.map(e => 
@@ -144,22 +155,21 @@ const Explosives = ({
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Amount (kg)
+            <label className="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
+              <span>Amount (kg)</span>
+              <span className="text-red-600 font-bold">{amount} kg</span>
             </label>
-            <input
-              type="range"
-              min="100"
-              max="2000"
-              step="100"
-              value={amount}
-              onChange={(e) => setAmount(parseInt(e.target.value))}
-              className="w-full"
+            <Slider
+              min={100}
+              max={2000}
+              step={100}
+              value={[amount]}
+              onValueChange={(value) => setAmount(value[0])}
+              className="py-2"
               disabled={isPlacementMode}
             />
             <div className="flex justify-between text-xs text-gray-500">
               <span>100 kg</span>
-              <span>{amount} kg</span>
               <span>2000 kg</span>
             </div>
           </div>
