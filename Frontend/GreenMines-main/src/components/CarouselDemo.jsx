@@ -28,12 +28,12 @@ export default function CarouselDemo() {
   <div className="grid md:grid-cols-3 gap-12">
     <div className="bg-[#342F49] p-10 rounded-lg shadow-lg border border-[#66C5CC]">
       <div className="flex items-center gap-2 mb-6">
-        <span className="text-base text-[#66C5CC]">SIH 2024</span>
+        <span className="text-base text-[#66C5CC]">SIH 2025</span>
         <span className="text-white">+</span>
         <span className="text-base text-[#66C5CC]">GreenMines</span>
       </div>
       <p className="text-lg text-white">
-        Our project, GreenMines, is driving change in sustainable mining and has proudly secured a spot in the **Smart India Hackathon 2024 Senior Grand Finale**.
+        Our project, GreenMines, is driving change in sustainable mining and has proudly secured a spot in the **Smart India Hackathon 2025 Senior Grand Finale**.
       </p>
     </div>
     <div className="bg-[#342F49] p-10 rounded-lg shadow-lg border border-[#66C5CC]">
