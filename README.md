@@ -19,13 +19,13 @@ Web application for the estimation of carbon footprints by coal mines of India.<
     <li><h2>Home Page of GreenMines</h2></li>
     <img src="Frontend/GreenMines-main/public/images/landing.png">
     <br><br>
-    <li><h2>Carbon Sink Estimation</h2></li>
+    <li><h2>Carbon Emission Estimation</h2></li>
     <ul>
         <li><h3>Electricity and Explosion Carbon Estimation</h3></li>
-        <img src="https://github.com/user-attachments/assets/f1f7f114-d135-4e99-bd65-e44732bb681f">
+        <img src="Frontend/GreenMines-main/public/images/e1.png">
         <br>
         <li><h3>Fuel and Shipping Carbon Estimation</h3></li>
-        <img src="https://github.com/user-attachments/assets/c477f7cd-19bb-4ca0-ae25-29c48c4cdba7">
+        <img src="Frontend/GreenMines-main/public/images/e2.png">
         <br><br>
     </ul>
     <ul>
@@ -53,9 +53,13 @@ Web application for the estimation of carbon footprints by coal mines of India.<
         <img src="Frontend/GreenMines-main/public/images/s5.png" alt="s5">
         <br><br>
     </ul>
-    <li><h2>Carbon Sink Analysis</h2></li>
-    <img src="https://github.com/user-attachments/assets/a1c27a8a-21f4-4eca-bb1b-8a929861d7f2"><br>
-    <img src="https://github.com/user-attachments/assets/b9e79414-d619-4593-8dd8-64573b5f7c4f">
+    <li><h2>Carbon Neutrality Pathways</h2></li>
+    <img src="Frontend/GreenMines-main/public/images/n1.png">
+    <img src="Frontend/GreenMines-main/public/images/n2.png">
+    <img src="Frontend/GreenMines-main/public/images/n3.png">
+    <img src="Frontend/GreenMines-main/public/images/n4.png">
+    <img src="Frontend/GreenMines-main/public/images/n5.png">
+    <img src="Frontend/GreenMines-main/public/images/n6.png">
     <br>
 </ul>
 
